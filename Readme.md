@@ -19,94 +19,111 @@ jQuery has event handlers that respond to user actions. This allows us to make a
 
 We've talked about dynamic web pages, where the user can interact with the page, but so far, all of the changes happen when the code is executed, not when a user does something. So, how do we tie the changes we want to make to some user action?
 
-##What are Events
-In javascript, Events are user actions such as mouse clicks, key presses, or window resizing. We can define code that will be run when those events happen.
+##JavaScript Events
+In JavaScript, events are user actions such as mouse clicks, key presses, or window resizing. We can define code that will be run when those events happen.
 
-Javascript allows us to bind functions to particular events. We create a function, and then tell the browser to run that function whenever that event happens. This is awesome - otherwise, we wouldn't have websites where things happen when a user does something!
-
-jQuery lets us bind events with a concise, readable syntax:
+JavaScript allows us to bind - or connect - functions to particular events. We create a function, and then tell the browser to run that function whenever that event happens. 
 
 ```
-$('.button').on('click', action);
+<body>
+	<h1>Javascript Events</h1>
+	<p>An event is an action a user does</p>
+	<p>Use jQuery to "listen" to the event and respond to it</p>
+	<p>Click on the header to see what happens</p>
+</body>
 ```
 
-In pure javascript, we'd have to use
-```
-document.querySelectorAll('.button').addEventListener("click", action, false);
-```
-But, what's that `action`?
+jQuery lets us bind events with a concise, readable syntax. In the example below, lets pretend we wanted to do something everytime the user clicked on a header.
 
-We pass a function as a parameter. The function we pass in is then 'attached' to that event listener - we call it an event handler.
-
-Often in javascript, we don't want code executed right away - we want to define something, then run the code when something happens to trigger it. This asynchronous style, with events and listeners and handlers, is called event-driven programming, and javascript is great for it.
-
-Javascript gives us a few different ways to pass the function into the binding method. We can define a named method, like we are used to, and pass that in:
+```js
+$("h1").click(action);
 ```
-function tellUsWeClicked () {
-	console.log("You clicked the button");
+
+* `$("h1")` - the *listener* - uses the selector syntax `$()` to get all the `<h1>` elements
+* `click` - the *event* we are responding to
+* `action` - the *handler* - or what we want our response to be
+
+Javascript gives us a few different ways to create the 'action', by using a named method or using a callback function.
+
+#### Named Methods as Event Handlers
+
+We can define a named method. Then we can pass that method as a parameter when we call the event:
+
+```js
+  function tellUsWeClicked () {
+	alert("You clicked a header");
 }
-$('.button').on('click',tellUsWeClicked);
-```
-We can also define an anonymous function as the parameter. It's anonymous because we create it without giving it a name. This is a common pattern you'll see when you look at lots of javascript code:
-```
-$('.button').on('click', function() {
-	console.log("You clicked the button");
-});
+    $("h1").click(tellUsWeClicked);
+```    
+
+
+#### Callback Functions as Event Handlers
+
+We can also use an anonymous function: `function(){}` as the parameter. It's anonymous because we create it without giving it a name. The code for the function will go inbetween the curly brackets. This is a common pattern, called a callback function.
+
+```js
+    $("h1").click(function(){
+        alert("You clicked a header");
+    });
 ```
 Especially if that function is not going to be used anywhere else, this style of coding makes it easy to read off exactly what will happen when the click event is triggered.
 
-##jQuery Click Handler
-One very popular event handler is the click() handler. The code defined in this handler will be run anytime the HTML element that we are listening to is clicked.
+Regardless of which way we choose to include the handler, we need to remember to include our external jQuery library. Your code should be linked from an extenal.js file, but for this case, it is inside the `<head>` tags.
+
+Notice that we need to include `$(document).ready` so that the page is ready to listen to events.
+```
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+
+    function tellUsWeClicked () {
+	alert("You clicked a header");
+	}
+    $("h1").click(tellUsWeClicked);
+});
+</script>
+</head>
+``
+
+
+##jQuery Mouseover Handler
+Another popular even is mouseover(). The code defined in this handler will be run anytime the HTML element that we are listening to is hovered over.
 Suppose we have HTML that looks like this
 ```
+<!DOCTYPE html>
 <html>
-  <head>...</head>
-  <body>
-    <button class="the-button">Push the Button</button>
-  </body>
+<head>
+</head>
+<body>
+
+<h1>Proofreader</h1>
+ <h2> Can you find the typo? Hover over it when you see it.</h2>
+    <p>My very important mother just <span class="mispelled">cent</span> me nine pizzas.
+      One was pepperoni, one was only cheese and one was a supreme.
+      They were delicious!</p>
+
+</body>
 </html>
 ```
-We could attach a click handler to the element with jQuery so that code is run anytime the button is clicked.
+We could attach a mouseover handler so that code is run anytime the user hovers over the mispelled word.
 ```
-$(".the-button").click(function()
-{
-  alert("House Music!! Boots, and Cats, and Boots, and Cats");
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+
+  $(".mispelled").mouseover(function()
+    {
+      alert("Champion! You found it!");
+    });
+
 });
+</script>
 ```
-Because we have created a jQuery event handler and attached it to the HTML element with the class the-button, when we click on the button, an alert will pop up that says
 
->"House Music!! Boots, and Cats, and Boots, and Cats"
 
-##What is a Callback function
-A callback function is the function (aka: the code) that is run when an event handler is triggered. In the previous example.click() takes an entire function as its input. If you count the parenthesis you'll see that this function on it's own looks like this:
-```
-function(){
-  alert("House Music!! Boots, and Cats, and Boots, and Cats");
-}
-```
-Let's say we wanted to just have our .click() alert "Hello World". The function to do that looks like this:
-```
-function(){
-  alert("Hello World");
-}
-```
-So the click handler just takes that exact function in between its (), like so:
-```
-$(".the-button").click(function(){alert("Hello World");});
-```
 Be Careful!! The (), {}, and ; can look confusing, but if you count where they open and close, you can see which matches with which.
-This is called an anonymous function, and is our callback function. It has no name and will only be run when the event handler is triggered. JS/jQuery allows you to also pass in a named function. Our code in this case could look like this:
-```
-// Define the function
-function houseMusic()
-{
-  alert("House Music!! Boots, and Cats, and Boots, and Cats");
-}
 
-// Pass the function to the event handler
-$(".the-button").click(houseMusic);
-```
-A trick to notice here is that when we pass in the function houseMusic we DO NOT include the parenthesis (), because we are not calling the function at this point. We are only telling the event handler where to find it.
 
 ##Other Event handlers
 jQuery can respond to a wide variety of Events which you should read about in the documentation. Some popular ones are:
@@ -126,34 +143,37 @@ $( document ).ready(function() {
 });
 ```
 ##$(this) inside Event callbacks
-If you want to do something to the element that fired an event (fade out the button you just clicked, for instance) $(this) allows you to easily access the element that fired the event.
+ $(this) allows you to easily access the element that fired the event.
 For Example:
-```
-$(".the-button").click(function()
-{
-  alert("House Music!! Boots, and Cats, and Boots, and Cats");
 
-  // I don't think they can handle more House Music
-  // Let's fade out the element they clicked on.
-
-  $(this).fadeOut();
-});
+```js
+  $("h1").click(function(){
+        alert("You clicked a header");
+        $(this).fadeOut();
+  });
 ```
-Here the $(this) refers to the button that we selected with the jQuery selector `$(".the-button"), since we are inside of its event handler.
+
+Here, the $(this) refers to the header that was just clicked.  After the user click on the header, an alert will pop up and then that header will fade out.
 
 ##Chaining Methods
 Up until this point we've been writing jQuery statements one at a time. However, there's a convenient way to do multiple things to an element without writing so much code - you can chain multiple commands together.
 
-For example, if we wanted an element to turn blue, and then move down and up we could write it this way:
+For example, if we wanted an element to turn blue, and then move up and down we could write it this way:
+
+```js
+$(this).css("color", "blue");
+$(this).slideUp(2000);
+$(this).slideDown(2000);
 ```
-$("#my_element").css("color", "blue");
-$("#my_element").slideDown(2000);
-$("#my_element").slideUp(2000);
+
+This works, but we're repeating the lookup for the HTML element with the ID of stuff multiple times. 
+
+Instead we can do this:
+
+```js
+$(this).css("color", "blue").slideUp(2000).slideDown(2000);
 ```
-This works, but we're repeating the lookup for the HTML element with the ID of stuff multiple times. This is not only harder to write but is also computationally expensive (it takes jQuery time to look it up each time). Instead we can do this:
-```
-$("#my_element").css("color", "blue").slideDown(2000).slideUp(2000);
-```
+
 Here, we've chained the methods by simply adding the next one to the end of the chain.
 
 ##Conclusion / So What?
